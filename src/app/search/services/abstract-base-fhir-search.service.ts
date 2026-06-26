@@ -13,7 +13,12 @@ const serverUrls = [
 
 export abstract class AbstractBaseFhirSearchService<T extends IFhirResource> {
   protected static readonly defaultMimeType = '_format=application/fhir+json';
-  protected static readonly baseUrl = serverUrls[0];
+
+  /**
+   * serverUrls[0] (wildfhir4.aegis.net) war zum Zeitpunkt der Entwicklung nicht erreichbar (DNS-Fehler).
+   * Daher Fallback auf serverUrls[1] (sqlonfhir-r4.azurewebsites.net), der stabil antwortet.
+   */
+  protected static readonly baseUrl = serverUrls[1];
 
   abstract search(query: string): Observable<IFhirSearchResponse<T>>;
 
