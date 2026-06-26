@@ -1,8 +1,14 @@
 import { Component, inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map, shareReplay, startWith, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, map, shareReplay, startWith, switchMap, tap } from 'rxjs/operators';
 import { SiteTitleService } from '@red-probeaufgabe/core';
-import { FhirSearchFn, IFhirPatient, IFhirPractitioner, IFhirSearchResponse } from '@red-probeaufgabe/types';
+import {
+  FhirSearchFn,
+  IFhirPatient,
+  IFhirPractitioner,
+  IFhirSearchResponse,
+  ISearchFormData,
+} from '@red-probeaufgabe/types';
 import { IUnicornTableColumn } from '@red-probeaufgabe/ui';
 import { AbstractSearchFacadeService } from '@red-probeaufgabe/search';
 import { GridContainerComponent } from '../ui/grid-container/grid-container.component';
@@ -20,7 +26,6 @@ export class DashboardComponent {
   private siteTitleService = inject(SiteTitleService);
   private searchFacade = inject(AbstractSearchFacadeService);
 
-  // Init unicorn columns to display
   columns: Set<IUnicornTableColumn> = new Set<IUnicornTableColumn>([
     'number',
     'resourceType',
@@ -30,18 +35,20 @@ export class DashboardComponent {
   ]);
   isLoading = true;
 
-  /*
-   * Implement search on keyword or fhirSearchFn change
-   **/
-  search$: Observable<IFhirSearchResponse<IFhirPatient | IFhirPractitioner>> = this.searchFacade
-    .search(FhirSearchFn.SearchAll, '')
-    .pipe(
-      catchError(this.handleError),
-      tap(() => {
-        this.isLoading = false;
-      }),
-      shareReplay(),
-    );
+  /** Subject das Suchparameter empfängt */
+  private searchParams$ = new BehaviorSubject<ISearchFormData>({
+    searchText: '',
+    searchFuncSelect: FhirSearchFn.SearchAll,
+  });
+
+  /** Reaktiver Such-Stream: Reagiert auf neue Suchparameter */
+  search$: Observable<IFhirSearchResponse<IFhirPatient | IFhirPractitioner>> = this.searchParams$.pipe(
+    tap(() => (this.isLoading = true)),
+    switchMap(({ searchFuncSelect, searchText }) => this.searchFacade.search(searchFuncSelect, searchText)),
+    catchError(this.handleError),
+    tap(() => (this.isLoading = false)),
+    shareReplay(),
+  );
 
   entries$: Observable<Array<IFhirPatient | IFhirPractitioner>> = this.search$.pipe(
     map((data) => !!data && data.entry),
@@ -55,6 +62,11 @@ export class DashboardComponent {
 
   constructor() {
     this.siteTitleService.setSiteTitle('Dashboard');
+  }
+
+  /** Wird vom SearchFormComponent aufgerufen */
+  onSearch(formData: ISearchFormData): void {
+    this.searchParams$.next(formData);
   }
 
   private handleError(): Observable<IFhirSearchResponse<IFhirPatient | IFhirPractitioner>> {

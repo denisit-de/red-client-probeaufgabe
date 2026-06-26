@@ -1,1 +1,26 @@
-<!-- implement search form here -->
+<form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="search-form">
+  <mat-form-field appearance="outline">
+    <mat-label>Name suchen</mat-label>
+    <input matInput formControlName="searchText" placeholder="z.B. Max Mustermann">
+    @if (searchForm.controls.searchText.hasError('required')) {
+      <mat-error>Suchbegriff ist erforderlich</mat-error>
+    } @else if (searchForm.controls.searchText.hasError('minlength')) {
+      <mat-error>Mindestens 2 Zeichen eingeben</mat-error>
+    } @else if (searchForm.controls.searchText.hasError('pattern')) {
+      <mat-error>Nur Buchstaben, Leerzeichen, Bindestriche und Apostrophe erlaubt</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Filter</mat-label>
+    <mat-select formControlName="searchFuncSelect">
+      @for (fn of searchFunctions; track fn.value) {
+        <mat-option [value]="fn.value">{{ fn.label }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="searchForm.invalid">
+    Suchen
+  </button>
+</form>
