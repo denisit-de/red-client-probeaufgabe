@@ -1,0 +1,5 @@
+@use './variables' as vars;
+
+.active-link {
+  color: vars.$accent;
+}

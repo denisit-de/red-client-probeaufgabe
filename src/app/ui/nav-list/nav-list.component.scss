@@ -1,0 +1,15 @@
+@use 'variables' as vars;
+
+.list-item {
+  a {
+    width: 100%;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .active-link {
+    color: vars.$accent;
+  }
+}
