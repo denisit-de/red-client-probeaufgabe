@@ -37,11 +37,11 @@ table {
   justify-content: center;
 }
 
-.mat-row:hover {
+.mat-mdc-row:hover {
   cursor: pointer;
   background-color: rgba($color: #808080, $alpha: 0.3);
 }
 
-.mat-row:active {
+.mat-mdc-row:active {
   background-color: rgba($color: #808080, $alpha: 0.8);
 }

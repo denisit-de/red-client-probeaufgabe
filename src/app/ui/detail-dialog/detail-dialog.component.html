@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>{{ resourceType }}: {{ name }}</h2>
+
+<mat-dialog-content>
+  <app-dialog-detail-row label="Ressourcentyp" [data]="resourceType"></app-dialog-detail-row>
+  <app-dialog-detail-row label="Name" [data]="name"></app-dialog-detail-row>
+  <app-dialog-detail-row label="Geschlecht" [data]="gender"></app-dialog-detail-row>
+  <app-dialog-detail-row label="Geburtsdatum" [data]="birthDate"></app-dialog-detail-row>
+  <app-dialog-detail-row label="Adresse" [data]="address"></app-dialog-detail-row>
+  <app-dialog-detail-row label="ID" [data]="id"></app-dialog-detail-row>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Schließen</button>
+</mat-dialog-actions>

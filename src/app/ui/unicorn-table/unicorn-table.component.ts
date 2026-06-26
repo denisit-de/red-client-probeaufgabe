@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import {
   MatTableDataSource,
@@ -39,12 +39,14 @@ import { DatePipe } from '@angular/common';
   ],
 })
 export class UnicornTableComponent implements OnInit {
-  dataSource: MatTableDataSource<IFhirPatient | IFhirPractitioner> = new MatTableDataSource([]);
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  dataSource = new MatTableDataSource<IFhirPatient | IFhirPractitioner>([]);
+  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
 
   @Input() columns: Set<IUnicornTableColumn> = new Set<IUnicornTableColumn>();
   @Input() totalLength = 0;
   @Input() isLoading = false;
+
+  @Output() rowClick = new EventEmitter<IFhirPatient | IFhirPractitioner>();
 
   @Input()
   set entries(value: Array<IFhirPatient | IFhirPractitioner>) {

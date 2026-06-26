@@ -15,6 +15,8 @@ import { GridContainerComponent } from '../ui/grid-container/grid-container.comp
 import { SearchFormComponent } from '../ui/search-form/search-form.component';
 import { UnicornTableComponent } from '../ui/unicorn-table/unicorn-table.component';
 import { AsyncPipe } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { DetailDialogComponent } from '../ui/detail-dialog/detail-dialog.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,6 +27,7 @@ import { AsyncPipe } from '@angular/common';
 export class DashboardComponent {
   private siteTitleService = inject(SiteTitleService);
   private searchFacade = inject(AbstractSearchFacadeService);
+  private dialog = inject(MatDialog);
 
   columns: Set<IUnicornTableColumn> = new Set<IUnicornTableColumn>([
     'number',
@@ -51,12 +54,12 @@ export class DashboardComponent {
   );
 
   entries$: Observable<Array<IFhirPatient | IFhirPractitioner>> = this.search$.pipe(
-    map((data) => !!data && data.entry),
+    map((data) => data?.entry ?? []),
     startWith([]),
   );
 
   totalLength$ = this.search$.pipe(
-    map((data) => !!data && data.total),
+    map((data) => data?.total ?? 0),
     startWith(0),
   );
 
@@ -67,6 +70,13 @@ export class DashboardComponent {
   /** Wird vom SearchFormComponent aufgerufen */
   onSearch(formData: ISearchFormData): void {
     this.searchParams$.next(formData);
+  }
+
+  onRowClick(row: IFhirPatient | IFhirPractitioner): void {
+    this.dialog.open(DetailDialogComponent, {
+      data: row,
+      width: '500px',
+    });
   }
 
   private handleError(): Observable<IFhirSearchResponse<IFhirPatient | IFhirPractitioner>> {
