@@ -12,6 +12,7 @@
     "experimentalDecorators": true,
     "target": "ES2022",
     "typeRoots": ["node_modules/@types"],
+    "types": ["jest", "node"],
     "module": "es2020",
     "paths": {
       "@red-probeaufgabe/types": ["app/types/index.ts"],
